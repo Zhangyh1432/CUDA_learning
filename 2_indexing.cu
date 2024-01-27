@@ -1,6 +1,7 @@
-#include <stdio.h>
+#include <iostream>
 #include <cuda.h>
 #include <cuda_runtime.h>
+using namespace std;
 
 __global__ void sum(float *x)
 {
@@ -19,14 +20,14 @@ int main(){
     int nbytes = N * sizeof(float);
     float *dx, *hx;
     /* allocate GPU mem */
-    cudaMalloc((void **)&dx, nbytes);//思考为什么要用二级指针
+    cudaMalloc((void **)&dx, nbytes);//传二级指针是为了能修改dx中的值，在dx中存储分配空间的起始地址
     /* allocate CPU mem */
     hx = (float*) malloc(nbytes);
     /* init host data */
     printf("hx original: \n");
     for (int i = 0; i < N; i++) {
         hx[i] = i;
-        printf("%g\n", hx[i]);
+        cout << hx[i] << endl;
     }
     /* copy data to GPU */
     cudaMemcpy(dx, hx, nbytes, cudaMemcpyHostToDevice);
@@ -36,7 +37,7 @@ int main(){
     cudaMemcpy(hx, dx, nbytes, cudaMemcpyDeviceToHost);
     printf("hx current: \n");
     for (int i = 0; i < N; i++) {
-        printf("%g\n", hx[i]);
+        cout << hx[i] << endl;
     }
     cudaFree(dx);
     free(hx);

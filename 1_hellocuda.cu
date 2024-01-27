@@ -11,5 +11,5 @@ __global__ void hello_cuda(){
 int main() {
     hello_cuda<<< 1, 1 >>>();
     cudaDeviceSynchronize();
-    return 0;
+    return 0;  
 }

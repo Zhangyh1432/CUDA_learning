@@ -82,15 +82,16 @@ int main()
     cudaMemcpy(dx, hx, nbytes, cudaMemcpyHostToDevice);
     cudaMemcpy(dy, hy, nbytes, cudaMemcpyHostToDevice);
 
+    //
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-    cudaEventRecord(start);
+    cudaEventCreate(&stop);   //__host__函数  
+    cudaEventRecord(start);   //__device__函数，在GPU端执行，因此先Record(start)，然后执行内核函数，然后Record(stop)
     /* launch GPU kernel */
     vec_add<<<grid, bs>>>(dx, dy, dz, N);
     cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&milliseconds, start, stop);
+    cudaEventSynchronize(stop);  //__host__函数  cudaEventSynchronize是CPU等待stop这个event被Record
+    cudaEventElapsedTime(&milliseconds, start, stop);  //__host__函数 
 
     /* copy GPU result to CPU */
     cudaMemcpy(hz, dz, nbytes, cudaMemcpyDeviceToHost);
